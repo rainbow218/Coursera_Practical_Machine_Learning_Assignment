@@ -1,0 +1,99 @@
+## Load relevant libraries
+
+library(caret)
+library(xlsx)
+
+## Load training dataset
+
+inputdir <- "/home/gbpvb/R/input/coursera"
+setwd(inputdir)
+pml_training <- read.csv("pml-training.csv", stringsAsFactors = FALSE)
+str(pml_training) 
+
+## Basic preprocessing 
+
+# 1) Imputation and standardization
+anyNA(pml_training) # returned TRUE
+impute_model <- preProcess(pml_training,method="knnImpute")
+pml_training_imputed <- predict(impute_model, newdata = pml_training)
+anyNA(pml_training_imputed) # returned FALSE
+
+## Split the data into training, testing and validation
+
+inBuild <- createDataPartition(y=pml_training_imputed$classe, p=0.7, list=FALSE)
+validation <- pml_training_imputed[-inBuild,]
+buildData <- pml_training_imputed[inBuild,]
+inTrain <- createDataPartition(y=buildData$classe, p=0.7, list=FALSE)
+training <- buildData[inTrain,]
+testing <- buildData[-inTrain,]
+  
+## Model building
+
+# 1) Picking variables to include in a model 
+
+# 1.1) Evaluated the accuracy of model after removing predictor variables that have many missing values (empty cells)
+training_subset <- training[,sapply(training,is.numeric) | sapply(training,is.integer)]
+training_subset$classe <- training$classe
+mod1 <- train(classe ~., method = "rf", data = training_subset[,-1])
+
+pred1 <- predict(mod1,testing[,-160])
+pred1acc <- pred1 == testing$classe
+summary(pred1acc) # accuracy 4087/4118
+
+pred1V <- predict(mod1,validation[,-160])
+pred1Vacc <- pred1V == validation$classe
+summary(pred1Vacc) # accuracy 5855/5885
+
+
+# 2) Preprocessing with PCA
+
+N <- abs(cor(training_subset[,-124]))
+diag(N) <- 0
+M <- which(N > 0.8,arr.ind = T)
+
+mod2 <- train(classe ~., method = "rf", data = training_subset[,-1], preProcess = "pca")
+
+pred1 <- predict(mod2,testing[,-160])
+pred1acc <- pred1 == testing$classe
+summary(pred1acc) # accuracy 3881/4118
+
+pred1V <- predict(mod2,validation[,-160])
+pred1Vacc <- pred1V == validation$classe
+summary(pred1Vacc) # accuracy 5574/5885
+
+# 3)	Picking the type of prediction function to use
+
+# 3.1) Build model using tree prediction function and evaluate the prediction accuracy
+mod3 <- train(classe ~., method = "rpart", data = training_subset[,-1])
+pred1 <- predict(mod3,testing[,-160])
+pred1acc <- pred1 == testing$classe
+summary(pred1acc) # accuracy 2257/4118
+
+pred1V <- predict(mod3,validation[,-160])
+pred1Vacc <- pred1V == validation$classe
+summary(pred1Vacc) # accuracy 3157/5885
+
+# 3.2) Build model using linear discriminant analysis prediction function and evaluate the prediction accuracy
+mod4 <- train(classe ~., method = "lda", data = training_subset[,-1])
+pred1 <- predict(mod4,testing[,-160])
+pred1acc <- pred1 == testing$classe
+summary(pred1acc) # accuracy 3375/4118
+
+pred1V <- predict(mod4,validation[,-160])
+pred1Vacc <- pred1V == validation$classe
+summary(pred1Vacc) # accuracy 4771/5885
+
+## predicting 20 test samples with prediction model
+
+pml_testing <- read.csv("pml-testing.csv", stringsAsFactors = FALSE)
+
+#convert datatype in dataframe to numeric
+i <- c(1:160)
+pml_testing[ , i] <- apply(pml_testing[ , i], 2,            
+                    function(x) as.numeric(as.character(x)))
+
+#impute and standardize the test dataset with the same model that was built from the training dataset
+pml_testing_imputed <- predict(impute_model, newdata = pml_testing)
+
+#apply the test data to the prediction model
+pred3 <- predict(mod1,pml_testing_imputed)
