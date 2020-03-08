@@ -1,0 +1,501 @@
+<h1>
+    Basic preprocessing for training dataset: Imputation &amp; standardization
+</h1>
+<p>
+    Pml-training.csv dataset contains variables/columns that have many “NA”
+    values. Prediction algorithms often fail with missing data in the dataset.
+    The missing data can be imputed before building the prediction model. An
+    exploration of the dataset by measuring the mean and standard deviation of
+    the each variable/column of the dataset revealed that the standard
+    deviation is much higher than the mean for many of the variables. One way
+    to preprocess the data that is highly skewed and variable is to do
+    standardization. Imputation with k nearest neighbor was done. “NA” values
+    were imputed and the other variables were standardized.
+</p>
+<h1>
+    Splitting data into training, testing and validation
+</h1>
+<p>
+    The Pml-training.csv dataframe was split into 3 categories in the following
+    ratio:
+</p>
+<table cellspacing="0" cellpadding="0" border="1">
+    <tbody>
+        <tr>
+            <td width="208" valign="top">
+                <p>
+                    Dataset
+                </p>
+            </td>
+            <td width="116" valign="top">
+                <p>
+                    Propotion
+                </p>
+            </td>
+            <td width="120" valign="top">
+                <p>
+                    Percentage
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="208" valign="top">
+                <p>
+                    training
+                </p>
+            </td>
+            <td width="116" valign="top">
+                <p>
+                    9619/19622
+                </p>
+            </td>
+            <td width="120" valign="top">
+                <p>
+                    49%
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="208" valign="top">
+                <p>
+                    testing
+                </p>
+            </td>
+            <td width="116" valign="top">
+                <p>
+                    4118/19622
+                </p>
+            </td>
+            <td width="120" valign="top">
+                <p>
+                    21%
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="208" valign="top">
+                <p>
+                    validation
+                </p>
+            </td>
+            <td width="116" valign="top">
+                <p>
+                    5885/19622
+                </p>
+            </td>
+            <td width="120" valign="top">
+                <p>
+                    30%
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p>
+</p>
+<h1>
+    Model builiding
+</h1>
+<h2>
+    1) Picking variables to include in a model
+</h2>
+<p>
+    Evaluated the accuracy of model after removing predictor variables that
+    have many missing values (empty cells). There were a total of 37 predictor
+    variables that were removed. After removing those columns from the training
+    dataset, the model was trained with the random forest algorithm.
+</p>
+<p>
+    Random Forest
+</p>
+<p>
+</p>
+<p>
+    9619 samples
+</p>
+<p>
+    122 predictors
+</p>
+<p>
+    5 classes: 'A', 'B', 'C', 'D', 'E'
+</p>
+<p>
+</p>
+<p>
+    No pre-processing
+</p>
+<p>
+    Resampling: Bootstrapped (25 reps)
+</p>
+<p>
+    Summary of sample sizes: 9619, 9619, 9619, 9619, 9619, 9619, ...
+</p>
+<p>
+    Resampling results across tuning parameters:
+</p>
+<p>
+</p>
+<p>
+    mtry Accuracy Kappa
+</p>
+<p>
+    2 0.9662840 0.9573353
+</p>
+<p>
+    62 0.9898579 0.9871678
+</p>
+<p>
+    122 0.9854524 0.9815926
+</p>
+<p>
+</p>
+<p>
+    Accuracy was used to select the optimal model using the largest value.
+</p>
+<p>
+    The final value used for the model was mtry = 62.
+</p>
+<p>
+    The model was used to predict the “classe” variable for the training and
+    validation dataset. The accuracy of the model is as follows:
+</p>
+<table cellspacing="0" cellpadding="0" border="1">
+    <tbody>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    Dataset
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    Accuracy
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    training
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    99.2%
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    validation
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    99.5%
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p>
+</p>
+<h2>
+    2) Preprocessing with PCA
+</h2>
+<p>
+    After checking the correlation between all the predictor variables within
+    the training dataset, many variables are shown to be highly correlated with
+    each other (having correlation greater than 0.8). Hence, the PCA
+    preprocessing step was incorporated into training the model.
+</p>
+<pre>Random Forest </pre>
+<pre> </pre>
+<pre>9619 samples</pre>
+<pre> 122 predictors</pre>
+<pre>   5 classes: 'A', 'B', 'C', 'D', 'E' </pre>
+<pre> </pre>
+<pre>Pre-processing: principal component signal extraction (122), centered (122),</pre>
+<pre> scaled (122) </pre>
+<pre>Resampling: Bootstrapped (25 reps) </pre>
+<pre>Summary of sample sizes: 9619, 9619, 9619, 9619, 9619, 9619, ... </pre>
+<pre>Resampling results across tuning parameters:</pre>
+<pre> </pre>
+<pre>  mtry  Accuracy   Kappa    </pre>
+<pre>    2   0.9263597  0.9068090</pre>
+<pre>   62   0.9006492  0.8742458</pre>
+<pre>  122   0.9013809  0.8751661</pre>
+<pre> </pre>
+<pre>Accuracy was used to select the optimal model using the largest value.</pre>
+<pre>The final value used for the model was mtry = 2 </pre>
+<pre> </pre>
+<p>
+    However the accuracy of the predictions are lower when preprocessing with
+    PCA. The model was used to predict the “classe” variable for the training
+    and validation dataset:
+</p>
+<table cellspacing="0" cellpadding="0" border="1">
+    <tbody>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    Dataset
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    Accuracy
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    training
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    94.2%
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    validation
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    94.7%
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p>
+</p>
+<h2>
+    <a name="_Hlk34560897">
+        3) Picking the type of prediction function to use
+    </a>
+</h2>
+<p>
+    Built the prediction model with various algorithms such as linear
+    discriminant analysis, tree, random forest. Tested and validated the
+    accuracy of each of those prediction models.
+</p>
+<p>
+    Prediction model with the tree algorithm, setting the method = “rpart”.
+</p>
+<p>
+    CART
+</p>
+<p>
+</p>
+<p>
+    9619 samples
+</p>
+<p>
+    122 predictors
+</p>
+<p>
+    5 classes: 'A', 'B', 'C', 'D', 'E'
+</p>
+<p>
+</p>
+<p>
+    No pre-processing
+</p>
+<p>
+    Resampling: Bootstrapped (25 reps)
+</p>
+<p>
+    Summary of sample sizes: 9619, 9619, 9619, 9619, 9619, 9619, ...
+</p>
+<p>
+    Resampling results across tuning parameters:
+</p>
+<p>
+</p>
+<p>
+    cp Accuracy Kappa
+</p>
+<p>
+    0.04205404 0.5785540 0.4667723
+</p>
+<p>
+    0.06900058 0.4717561 0.3388448
+</p>
+<p>
+    0.07975015 0.3361308 0.1097463
+</p>
+<p>
+</p>
+<p>
+    Accuracy was used to select the optimal model using the largest value.
+</p>
+<p>
+    The final value used for the model was cp = 0.04205404.
+</p>
+<p>
+</p>
+<p>
+    The model was used to predict the “classe” variable for the training and
+    validation dataset. Accuracy of the prediction model with the tree
+    algorithm:
+</p>
+<table cellspacing="0" cellpadding="0" border="1">
+    <tbody>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    Dataset
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    Accuracy
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    training
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    54.8%
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    validation
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    53.6%
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p>
+</p>
+<p>
+    Prediction model with the linear discrimant analysis algorithm, setting the
+    method = “lda”.
+</p>
+<p>
+    Linear Discriminant Analysis
+</p>
+<p>
+</p>
+<p>
+    9619 samples
+</p>
+<p>
+    122 predictors
+</p>
+<p>
+    5 classes: 'A', 'B', 'C', 'D', 'E'
+</p>
+<p>
+</p>
+<p>
+    No pre-processing
+</p>
+<p>
+    Resampling: Bootstrapped (25 reps)
+</p>
+<p>
+    Summary of sample sizes: 9619, 9619, 9619, 9619, 9619, 9619, ...
+</p>
+<p>
+    Resampling results:
+</p>
+<p>
+</p>
+<p>
+    Accuracy Kappa
+</p>
+<p>
+    0.8118816 0.7622185
+</p>
+<p>
+    The model was used to predict the “classe” variable for the training and
+    validation dataset. Accuracy of the prediction model with the linear
+    discriminant analysis algorithm:
+</p>
+<table cellspacing="0" cellpadding="0" border="1">
+    <tbody>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    Dataset
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    Accuracy
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    training
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    82%
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="210" valign="top">
+                <p>
+                    validation
+                </p>
+            </td>
+            <td width="114" valign="top">
+                <p>
+                    81%
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p>
+</p>
+<h2>
+    4) Cross-validation
+</h2>
+<p>
+    The cross validation method was applied for training the prediction model
+    by using the random resampling with replacement (bootstrap method with 25
+    repetition). The accuracy of the prediction model was also calculated by
+    applying the prediction model trained from training dataset for predicting
+    the “classe” variable for the training and validation dataset.
+</p>
+<p>
+</p>
+<h1>
+    Predicting classe variable for the pml-testing dataset
+</h1>
+<p>
+    The pml-training.csv dataset that comprises of 20 samples with unknown
+    classe variable were applied to the prediction model to predict the classe
+    variable. The dataset was preprocessed in the same manner as the training
+    dataset, by imputation and standardizing the data with the same
+    preprocessing model using k nearest neighbour algorithm. Subsequently the
+    preprocessed dataset was applied to prediction model.
+</p>
