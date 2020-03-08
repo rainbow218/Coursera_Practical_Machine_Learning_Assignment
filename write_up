@@ -1,14 +1,13 @@
 Basic preprocessing for training dataset: Imputation & standardization 
 Pml-training.csv dataset contains variables/columns that have many “NA” values. Prediction algorithms often fail with missing data in the dataset. The missing data can be imputed before building the prediction model. An exploration of the dataset by measuring the mean and standard deviation of the each variable/column of the dataset revealed that the standard deviation is much higher than the mean for many of the variables. One way to preprocess the data that is highly skewed and variable is to do standardization. Imputation with k nearest neighbor was done. “NA” values were imputed and the other variables were standardized.
-
 Splitting data into training, testing and validation
 The Pml-training.csv dataframe was split into 3 categories in the following ratio:
-Dataset	    Proportion	Percentage
-training	  9619/19622	49%
-testing	    4118/19622	21%
-validation	5885/19622	30%
+Dataset	   Proportion	 Percentage
+training	  9619/19622	 49%
+testing	   4118/19622	 21%
+validation	5885/19622	 30%
 
-Model building
+Model builiding
 1)	Picking variables to include in a model 
 Evaluated the accuracy of model after removing predictor variables that have many missing values (empty cells). There were a total of 37 predictor variables that were removed. After removing those columns from the training dataset, the model was trained with the random forest algorithm. 
 Random Forest 
