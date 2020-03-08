@@ -8,10 +8,10 @@ and the other variables were standardized.
 
 Splitting data into training, testing and validation
 The Pml-training.csv dataframe was split into 3 categories in the following ratio:
-Dataset	     Proportion	 Percentage
-training	  9619/19622	 49%
-testing	     4118/19622	 21%
-validation	5885/19622	 30%
+Dataset-----Proportion-----Percentage
+training----9619/19622-----49%
+testing-----4118/19622-----21%
+validation--5885/19622-----30%
 
 Model builiding
 1)	Picking variables to include in a model 
