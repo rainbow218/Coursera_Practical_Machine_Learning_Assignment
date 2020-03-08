@@ -1,0 +1,114 @@
+Basic preprocessing for training dataset: Imputation & standardization 
+Pml-training.csv dataset contains variables/columns that have many “NA” values. Prediction algorithms often fail with missing data in the dataset. The missing data can be imputed before building the prediction model. An exploration of the dataset by measuring the mean and standard deviation of the each variable/column of the dataset revealed that the standard deviation is much higher than the mean for many of the variables. One way to preprocess the data that is highly skewed and variable is to do standardization. Imputation with k nearest neighbor was done. “NA” values were imputed and the other variables were standardized.
+
+Splitting data into training, testing and validation
+The Pml-training.csv dataframe was split into 3 categories in the following ratio:
+Dataset	    Proportion	Percentage
+training	  9619/19622	49%
+testing	    4118/19622	21%
+validation	5885/19622	30%
+
+Model building
+1)	Picking variables to include in a model 
+Evaluated the accuracy of model after removing predictor variables that have many missing values (empty cells). There were a total of 37 predictor variables that were removed. After removing those columns from the training dataset, the model was trained with the random forest algorithm. 
+Random Forest 
+
+9619 samples
+ 122 predictors
+   5 classes: 'A', 'B', 'C', 'D', 'E' 
+
+No pre-processing
+Resampling: Bootstrapped (25 reps) 
+Summary of sample sizes: 9619, 9619, 9619, 9619, 9619, 9619, ... 
+Resampling results across tuning parameters:
+
+  mtry  Accuracy   Kappa    
+    2   0.9662840  0.9573353
+   62   0.9898579  0.9871678
+  122   0.9854524  0.9815926
+
+Accuracy was used to select the optimal model using the largest value.
+The final value used for the model was mtry = 62.
+The model was used to predict the “classe” variable for the training and validation dataset. The accuracy of the model is as follows:
+Dataset	Accuracy
+training	99.2%
+validation	99.5%
+
+2)	Preprocessing with PCA
+After checking the correlation between all the predictor variables within the training dataset, many variables are shown to be highly correlated with each other (having correlation greater than 0.8).  Hence, the PCA preprocessing step was incorporated into training the model.
+Random Forest 
+
+9619 samples
+ 122 predictors
+   5 classes: 'A', 'B', 'C', 'D', 'E' 
+
+Pre-processing: principal component signal extraction (122), centered (122),
+ scaled (122) 
+Resampling: Bootstrapped (25 reps) 
+Summary of sample sizes: 9619, 9619, 9619, 9619, 9619, 9619, ... 
+Resampling results across tuning parameters:
+
+  mtry  Accuracy   Kappa    
+    2   0.9263597  0.9068090
+   62   0.9006492  0.8742458
+  122   0.9013809  0.8751661
+
+Accuracy was used to select the optimal model using the largest value.
+The final value used for the model was mtry = 2 
+
+However the accuracy of the predictions are lower when preprocessing with PCA. The model was used to predict the “classe” variable for the training and validation dataset:
+Dataset	Accuracy
+training	94.2%
+validation	94.7%
+
+3)	Picking the type of prediction function to use
+Built the prediction model with various algorithms such as linear discriminant analysis, tree, random forest. Tested and validated the accuracy of each of those prediction models.
+Prediction model with the tree algorithm, setting the method = “rpart”.
+CART 
+
+9619 samples
+ 122 predictors
+   5 classes: 'A', 'B', 'C', 'D', 'E' 
+
+No pre-processing
+Resampling: Bootstrapped (25 reps) 
+Summary of sample sizes: 9619, 9619, 9619, 9619, 9619, 9619, ... 
+Resampling results across tuning parameters:
+
+  cp          Accuracy   Kappa    
+  0.04205404  0.5785540  0.4667723
+  0.06900058  0.4717561  0.3388448
+  0.07975015  0.3361308  0.1097463
+
+Accuracy was used to select the optimal model using the largest value.
+The final value used for the model was cp = 0.04205404.
+
+The model was used to predict the “classe” variable for the training and validation dataset. Accuracy of the prediction model with the tree algorithm:
+Dataset	Accuracy
+training	54.8%
+validation	53.6%
+
+Prediction model with the linear discrimant analysis algorithm, setting the method = “lda”.
+Linear Discriminant Analysis 
+
+9619 samples
+ 122 predictors
+   5 classes: 'A', 'B', 'C', 'D', 'E' 
+
+No pre-processing
+Resampling: Bootstrapped (25 reps) 
+Summary of sample sizes: 9619, 9619, 9619, 9619, 9619, 9619, ... 
+Resampling results:
+
+  Accuracy   Kappa    
+  0.8118816  0.7622185
+The model was used to predict the “classe” variable for the training and validation dataset. Accuracy of the prediction model with the linear discriminant analysis algorithm:
+Dataset	Accuracy
+training	82%
+validation	81%
+
+4)	Cross-validation
+The cross validation method was applied for training the prediction model by using the random resampling with replacement (bootstrap method with 25 repetition). The accuracy of the prediction model was also calculated by applying the prediction model trained from training dataset for predicting the “classe” variable for the training and validation dataset.
+
+Predicting classe variable for the pml-testing dataset
+The pml-training.csv dataset that comprises of 20 samples with unknown classe variable were applied to the prediction model to predict the classe variable. The dataset was preprocessed in the same manner as the training dataset, by imputation and standardizing the data with the same preprocessing model using k nearest neighbour algorithm. Subsequently the preprocessed dataset was applied to prediction model. 
